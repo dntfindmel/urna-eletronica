@@ -66,14 +66,19 @@ function urnaEletronica(){
         operacao = parseInt(prompt(`Digite o número correspondente ao seu voto:\n\n[1] ${candidato1}\n[2] ${candidato2}\n[3] ${candidato3}\n[5] Branco\n[8] Nulo\n[0] Encerrar operação\n`));
         if(operacao === 1){
             votoC1 += 1;
+            alert(`Candidato ${candidato1} votado com sucesso!`)
         } else if(operacao === 2){
             votoC2 += 1;
+            alert(`Candidato ${candidato2} votado com sucesso!`)
         } else if(operacao === 3){
             votoC3 += 1;
+            alert(`Candidato ${candidato3} votado com sucesso!`)
         } else if(operacao === 5){
             votoBranco += 1;
+            alert('Voto em branco registrado com sucesso!')
         } else if(operacao === 8){
             votoNulo += 1;
+            alert('Voto nulo registrado com sucesso!')
         } else if(operacao === 0) {
             alert("Encerrando a operação");
         } else {
