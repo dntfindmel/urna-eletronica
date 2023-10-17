@@ -14,6 +14,11 @@ function urnaEletronica(){
     votoBranco = 0,
     votoGanhador = 0,
     porcentagem = 0,
+    porcentagemC1 = 0,
+    porcentagemC2 = 0,
+    porcentagemC3 = 0,
+    porcentagemBranco = 0,
+    porcentagemNulo = 0,
     votoNulo = 0;
 
     let condicao = true
@@ -60,13 +65,20 @@ function urnaEletronica(){
         ganhador = candidato3;
         votoGanhador = votoC3 + votoBranco;
     } else {
-        alert(`Empate! Sem ganhadores.\nA quantidade de votos brancos e nulos foram de: ${votoBranco} e ${votoNulo}`);
+        alert(`Empate! Sem ganhadores.\nA quantidade de votos brancos e nulos foram de: ${porcentagemBranco.toFixed(2)}% e ${votoBranco} votos brancos no total e ${porcentagemNulo.toFixed(2)}% e ${votoNulo} votos nulos no total.`);
     }
 
-    porcentagem = (votoGanhador / (votoC1 + votoC2 + votoC3 + votoNulo)) * 100;
+    porcentagemC1 = (votoC1 / (votoC1 + votoC2 + votoC3 + votoNulo + votoBranco)) * 100;
+    porcentagemC2 = (votoC2 / (votoC1 + votoC2 + votoC3 + votoNulo + votoBranco)) * 100;
+    porcentagemC3 = (votoC3 / (votoC1 + votoC2 + votoC3 + votoNulo + votoBranco)) * 100;
+    porcentagem = (votoGanhador / (votoC1 + votoC2 + votoC3 + votoNulo + votoBranco)) * 100;
+    porcentagemBranco = (votoBranco / (votoC1 + votoC2 + votoC3 + votoNulo + votoBranco)) * 100;
+    porcentagemNulo = (votoNulo / (votoC1 + votoC2 + votoC3 + votoNulo + votoBranco)) * 100;
 
     if(ganhador !== ""){
-        alert(`O ganhador foi: ${ganhador} com ${porcentagem.toFixed(2)}% dos votos.\nA quantidade de votos brancos e nulos foram de: ${votoBranco} e ${votoNulo}.`);
+        alert(`O total de voto de todos os candidatos e seus percentuais foram:\n${candidato1}, ${votoC1} e ${porcentagemC1.toFixed(2)}%\n${candidato2}, ${votoC2} e ${porcentagemC2.toFixed(2)}%\n${candidato3}, ${votoC3} e ${porcentagemC3.toFixed(2)}%`);
+        alert(`A quantidade de votos brancos e nulos foram de:\n${porcentagemBranco.toFixed(2)}% e ${votoBranco} de votos brancos no total\n${porcentagemNulo.toFixed(2)}% e ${votoNulo} de votos nulos no total.`)
+        alert(`O ganhador foi ${ganhador} com ${porcentagem.toFixed(2)}% dos votos e ${votoGanhador} votos no total após acréscimo de votos brancos.`);
     }
     
 }
