@@ -7,6 +7,7 @@ function urnaEletronica(){
     fim = "",
     ganhador = "";
 
+
     let 
     votoC1 = 0,
     votoC2 = 0,
@@ -19,16 +20,39 @@ function urnaEletronica(){
     porcentagemC3 = 0,
     porcentagemBranco = 0,
     porcentagemNulo = 0,
-    votoNulo = 0;
+    redefinir = 0,
+    votoNulo = 0,
+    senha = 0;
 
-    let condicao = true
-
+    let 
+    condicaoCandidato = false;
     candidato1 = prompt("Digite o nome do candidato n° 1: ");
     candidato2 = prompt("Digite o nome do candidato n° 2: ");
     candidato3 = prompt("Digite o nome do candidato n° 3: ");
+    
+        while(condicaoCandidato != true){
+        condicaoCandidato = confirm(`Você confirma o nome dos candidatos abaixo?\n1 - ${candidato1}\n 2 - ${candidato2}\n3 - ${candidato3}`)
+        if (condicaoCandidato != true) {
+            redefinir = parseInt(prompt(`Qual candidato gostaria de redefinir?\n[1]${candidato1}\n[2]${candidato2}\n[3]${candidato3}`));
+            if (redefinir === 1){
+                candidato1 = prompt("Escreva o nome do candidato n° 1: ");
+                condicaoCandidato = true;
+            } else if (redefinir === 2){
+                candidato2 = prompt("Escreva o nome do candidato n° 2: ");
+                condicaoCandidato = true;
+            } else if (redefinir === 3){
+                candidato3 = prompt("Escreva o nome do candidato n° 3: ");
+                condicaoCandidato = true;
+            } else {
+                alert("Valor inválido, tente novamente!");
+            } 
+        }
+    }
+
+    senha = prompt("Digite a senha necessária para encerrar a operação: ");
 
     do {
-        operacao = parseInt(prompt(`Digite o número correspondente ao seu voto:\n\n[1] ${candidato1}\n[2] ${candidato2}\n[3] ${candidato3}\n[5] Branco\n[8] Nulo`));
+        operacao = parseInt(prompt(`Digite o número correspondente ao seu voto:\n\n[1] ${candidato1}\n[2] ${candidato2}\n[3] ${candidato3}\n[5] Branco`));
         if(operacao === 1){
             votoC1 += 1;
             alert(`Candidato ${candidato1} votado com sucesso!`)
@@ -41,19 +65,19 @@ function urnaEletronica(){
         } else if(operacao === 5){
             votoBranco += 1;
             alert('Voto em branco registrado com sucesso!')
-        } else if(operacao === 8){
-            votoNulo += 1;
-            alert('Voto nulo registrado com sucesso!')
-        } else if(operacao === 150714) {
+        } else if(operacao == senha) {
             fim = prompt("Você tem certeza que deseja encerrar a operação? [S/N]")
                 if (fim === "S" || fim === "s") {
                     alert("Encerrando a operação!");
-                    condicao = false;
                 }
         } else {
-            alert("Operação inválida");
+           let confirmacao = confirm("Seu voto será anulado. Gostaria de prosseguir?");
+            if (confirmacao == true) {
+                alert("Voto nulo registrado com sucesso!");
+                votoNulo += 1;
+            }  
         }
-    } while(condicao);
+    } while(!senha);
 
     if(votoC1 > votoC2 && votoC1 > votoC3){
         ganhador = candidato1;
