@@ -26,12 +26,13 @@ function urnaEletronica(){
 
     let 
     condicaoCandidato = false;
+
     candidato1 = prompt("Digite o nome do candidato n° 1: ");
     candidato2 = prompt("Digite o nome do candidato n° 2: ");
     candidato3 = prompt("Digite o nome do candidato n° 3: ");
     
         while(condicaoCandidato != true){
-        condicaoCandidato = confirm(`Você confirma o nome dos candidatos abaixo?\n1 - ${candidato1}\n 2 - ${candidato2}\n3 - ${candidato3}`)
+        condicaoCandidato = confirm(`Você confirma o nome dos candidatos abaixo?\n1 - ${candidato1}\n 2 - ${candidato2}\n3 - ${candidato3}`);
         if (condicaoCandidato != true) {
             redefinir = parseInt(prompt(`Qual candidato gostaria de redefinir?\n[1]${candidato1}\n[2]${candidato2}\n[3]${candidato3}`));
             if (redefinir === 1){
@@ -66,10 +67,7 @@ function urnaEletronica(){
             votoBranco += 1;
             alert('Voto em branco registrado com sucesso!')
         } else if(operacao == senha) {
-            fim = prompt("Você tem certeza que deseja encerrar a operação? [S/N]")
-                if (fim === "S" || fim === "s") {
-                    alert("Encerrando a operação!");
-                }
+            fim = confirm("Você tem certeza que deseja encerrar a operação?");
         } else {
            let confirmacao = confirm("Seu voto será anulado. Gostaria de prosseguir?");
             if (confirmacao == true) {
@@ -77,7 +75,7 @@ function urnaEletronica(){
                 votoNulo += 1;
             }  
         }
-    } while(!senha);
+    } while(fim !== true);
 
     if(votoC1 > votoC2 && votoC1 > votoC3){
         ganhador = candidato1;
