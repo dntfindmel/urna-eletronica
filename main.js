@@ -11,7 +11,6 @@ function validarUrna() {
 
     if(hashObtido === hashOriginal){
         console.log("A urna não foi alterada! Executando o código para a função...");
-        urnaEletronica();
     } else {
         console.log("A urna foi alterada. Não é possível executar a função.")
     }
