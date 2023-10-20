@@ -1,3 +1,22 @@
+
+function validarUrna() {
+    const hashOriginal = "5c5e819579e41be1012ac8034062096e57092177ed34c4972b568f298430ce70";
+
+    const codigoUrna = urnaEletronica.toString();
+
+    const hashObtido = CryptoJS.SHA256(codigoUrna).toString();
+
+    console.log("Hash Original:", hashOriginal);
+    console.log("Hash Obtido:", hashObtido);
+
+    if(hashObtido === hashOriginal){
+        console.log("A urna não foi alterada! Executando o código para a função...");
+        urnaEletronica();
+    } else {
+        console.log("A urna foi alterada. Não é possível executar a função.")
+    }
+}
+
 function urnaEletronica() {
     // Declaração das variáveis de string
     let candidato1 = "",
@@ -16,8 +35,7 @@ function urnaEletronica() {
     
     // Declaração das variáveis booleanas
     let 
-    condicaoCandidato = false,
-    fim = true;
+    condicaoCandidato = false;
 
     // Prompt para armazenar o nome dos candidatos
     candidato1 = prompt("Digite o nome do candidato n° 1: ");
@@ -57,47 +75,48 @@ function urnaEletronica() {
         return;
     }
 
-    // Loop para a votação
+    // Definir o valor da variável fim para o loop
+    let fim = false;
+
     do {
-        // Variável criada sem o parseInt para que não dê problema ao receber senhas em string
         let operacao = prompt(`Digite o número correspondente ao seu voto:\n\n[1] ${candidato1}\n[2] ${candidato2}\n[3] ${candidato3}\n[5] Branco`);
-        
-        // Condições para a votação dos candidatos e recebimento da senha
-        if (operacao === "5") {
-            votoBranco++;
-            alert('Voto em branco registrado com sucesso!');
-        } else if (operacao === senha) {
-            fim = confirm("Você tem certeza que deseja encerrar a operação?");
-        } else {
-            let voto = parseInt(operacao);
-            // Condição para se o prompt for diferente de Not a Number e estiver entre 1 e 3
-            if (!isNaN(voto) && voto >= 1 && voto <= 3) {
-                switch (voto) {
-                    case 1:
-                        votoC1++;
-                        alert(`Candidato ${candidato1} votado com sucesso!`);
-                        break;
-                    case 2:
-                        votoC2++;
-                        alert(`Candidato ${candidato2} votado com sucesso!`);
-                        break;
-                    case 3:
-                        votoC3++;
-                        alert(`Candidato ${candidato3} votado com sucesso!`);
-                        break;
-                    default:
-                        alert("Opção inválida, tente novamente!");
-                        break;
+        switch (operacao) {
+            case "5":
+                votoBranco++;
+                alert('Voto em branco registrado com sucesso!');
+                break;
+            case senha:
+                fim = confirm("Você tem certeza que deseja encerrar a operação?");
+                break;
+            default:
+                let voto = parseInt(operacao);
+                if (!isNaN(voto) && voto >= 1 && voto <= 3) {
+                    switch (voto) {
+                        case 1:
+                            votoC1++;
+                            alert(`Candidato ${candidato1} votado com sucesso!`);
+                            break;
+                        case 2:
+                            votoC2++;
+                            alert(`Candidato ${candidato2} votado com sucesso!`);
+                            break;
+                        case 3:
+                            votoC3++;
+                            alert(`Candidato ${candidato3} votado com sucesso!`);
+                            break;
+                        default:
+                            alert("Operação inválida!");
+                    }
+                } else {
+                    let confirmacao = confirm("Seu voto será anulado. Gostaria de prosseguir?");
+                    if (confirmacao) {
+                        alert("Voto nulo registrado com sucesso!");
+                        votoNulo++;
+                    }
                 }
-            } else {
-                let confirmacao = confirm("Seu voto será anulado. Gostaria de prosseguir?");
-                if (confirmacao == true) {
-                    alert("Voto nulo registrado com sucesso!");
-                    votoNulo++;
-                }
-            }
         }
     } while (!fim);
+    
 
     // Contagem dos votos e definição do ganhador
     if (votoC1 > votoC2 && votoC1 > votoC3) {
@@ -127,34 +146,6 @@ function urnaEletronica() {
         alert(`O total de voto de todos os candidatos e seus percentuais foram:\n${candidato1}, ${votoC1} e ${porcentagemC1.toFixed(2)}%\n${candidato2}, ${votoC2} e ${porcentagemC2.toFixed(2)}%\n${candidato3}, ${votoC3} e ${porcentagemC3.toFixed(2)}%`);
         alert(`A quantidade de votos brancos e nulos foram de:\n${porcentagemBranco.toFixed(2)}% e ${votoBranco} de votos brancos no total\n${porcentagemNulo.toFixed(2)}`);
         alert(`O ganhador foi ${ganhador} com ${porcentagem.toFixed(2)}% dos votos e ${votoGanhador} votos com acréscimo de votos brancos.`);
-    }
-}
+    }}
 
-async function calcularHash(funcao) {
-    const codigoFonte = funcao.toString();
-    const buffer = new TextEncoder().encode(codigoFonte);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashString = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-    return hashString;
-}
-
-// Verificar a integridade antes da execução da função
-calcularHash(urnaEletronica).then(hashAntes => {
-    console.log("Hash antes da execução:", hashAntes);
-
-    // Executar a função urnaEletronica()
-    urnaEletronica();
-
-    // Verificar a integridade após a execução da função
-    calcularHash(urnaEletronica).then(hashDepois => {
-        console.log("Hash depois da execução:", hashDepois);
-
-        // Comparar as hashes antes e depois
-        if (hashAntes === hashDepois) {
-            console.log("A urna não foi alterada.");
-        } else {
-            console.log("A urna foi alterada!");
-        }
-    });
-});
+validarUrna();
