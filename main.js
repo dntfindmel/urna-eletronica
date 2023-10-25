@@ -1,6 +1,5 @@
-
 function validarUrna() {
-    const hashOriginal = "5c5e819579e41be1012ac8034062096e57092177ed34c4972b568f298430ce70";
+    const hashOriginal = "0ee110c20c3538c2382e738c93f4898075159def016b7b2722f2377971466263";
 
     const codigoUrna = urnaEletronica.toString();
 
@@ -16,7 +15,18 @@ function validarUrna() {
     }
 }
 
+function horaVotacaoInicio(){
+    horaAtual = new Date();
+    alert("Horário de ínicio: " + horaAtual.getHours() + ":" + horaAtual.getMinutes() + ":" + horaAtual.getSeconds());
+}
+
+function horaVotacaoFinal(){
+    horaAtual = new Date();
+    alert("Horário de término: " + horaAtual.getHours() + ":" + horaAtual.getMinutes() + ":" + horaAtual.getSeconds());
+}
+
 function urnaEletronica() {
+    horaVotacaoInicio();
     // Declaração das variáveis de string
     let candidato1 = "",
         candidato2 = "",
@@ -35,6 +45,7 @@ function urnaEletronica() {
     // Declaração das variáveis booleanas
     let 
     condicaoCandidato = false;
+    votoConfirmacao = true;
 
     // Prompt para armazenar o nome dos candidatos
     candidato1 = prompt("Digite o nome do candidato n° 1: ");
@@ -79,10 +90,17 @@ function urnaEletronica() {
 
     do {
         let operacao = prompt(`Digite o número correspondente ao seu voto:\n\n[1] ${candidato1}\n[2] ${candidato2}\n[3] ${candidato3}\n[5] Branco`);
+
         switch (operacao) {
             case "5":
-                votoBranco++;
-                alert('Voto em branco registrado com sucesso!');
+                votoConfirmacao = confirm("Você votou em branco. Deseja confirmar seu voto?");
+                if (votoConfirmacao == true) {
+                    alert("Voto em branco registrado com sucesso.");
+                    votoBranco++;
+                } else {
+                    // Adicionando opção de corrigir o voto em branco
+                    alert("Corrigindo voto em branco.");
+                }
                 break;
             case senha:
                 fim = confirm("Você tem certeza que deseja encerrar a operação?");
@@ -90,27 +108,32 @@ function urnaEletronica() {
             default:
                 let voto = parseInt(operacao);
                 if (!isNaN(voto) && voto >= 1 && voto <= 3) {
-                    switch (voto) {
-                        case 1:
-                            votoC1++;
-                            alert(`Candidato ${candidato1} votado com sucesso!`);
-                            break;
-                        case 2:
-                            votoC2++;
-                            alert(`Candidato ${candidato2} votado com sucesso!`);
-                            break;
-                        case 3:
-                            votoC3++;
-                            alert(`Candidato ${candidato3} votado com sucesso!`);
-                            break;
-                        default:
-                            alert("Operação inválida!");
+                    let confirmacaoVoto = confirm(`Você votou em ${eval('candidato' + voto)}. Deseja confirmar seu voto?`);
+                    if (confirmacaoVoto) {
+                        alert(`Voto para ${eval('candidato' + voto)} registrado com sucesso!`);
+                        switch (voto) {
+                            case 1:
+                                votoC1++;
+                                break;
+                            case 2:
+                                votoC2++;
+                                break;
+                            case 3:
+                                votoC3++;
+                                break;
+                        }
+                    } else {
+                        // Adicionando opção de corrigir o voto
+                        alert("Corrigindo voto.");
                     }
                 } else {
                     let confirmacao = confirm("Seu voto será anulado. Gostaria de prosseguir?");
                     if (confirmacao) {
                         alert("Voto nulo registrado com sucesso!");
                         votoNulo++;
+                    } else {
+                        // Adicionando opção de corrigir o voto nulo
+                        alert("Corrigindo voto nulo.");
                     }
                 }
         }
@@ -145,6 +168,10 @@ function urnaEletronica() {
         alert(`O total de voto de todos os candidatos e seus percentuais foram:\n${candidato1}, ${votoC1} e ${porcentagemC1.toFixed(2)}%\n${candidato2}, ${votoC2} e ${porcentagemC2.toFixed(2)}%\n${candidato3}, ${votoC3} e ${porcentagemC3.toFixed(2)}%`);
         alert(`A quantidade de votos brancos e nulos foram de:\n${porcentagemBranco.toFixed(2)}% e ${votoBranco} de votos brancos no total\n${porcentagemNulo.toFixed(2)}`);
         alert(`O ganhador foi ${ganhador} com ${porcentagem.toFixed(2)}% dos votos e ${votoGanhador} votos com acréscimo de votos brancos.`);
-    }}
+    }
+
+    horaVotacaoFinal();
+}
+
 
 validarUrna();
