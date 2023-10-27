@@ -15,22 +15,15 @@ function validarUrna() {
     }
 }
 
-function horaVotacaoInicio(){
+function horaVotacao(){
     horaAtual = new Date();
-    alert("Horário de ínicio: " + horaAtual.getHours() + ":" + horaAtual.getMinutes() + ":" + horaAtual.getSeconds());
+    alert("Hora atual - " + horaAtual.getHours() + ":" + horaAtual.getMinutes() + ":" + horaAtual.getSeconds() + "\nData atual - " + horaAtual.getDate() + "/" + (horaAtual.getMonth()+1) + "/" + horaAtual.getFullYear());
 }
 
-function horaVotacaoFinal(){
-    horaAtual = new Date();
-    alert("Horário de término: " + horaAtual.getHours() + ":" + horaAtual.getMinutes() + ":" + horaAtual.getSeconds());
-}
 
 function urnaEletronica() {
-    horaVotacaoInicio();
     // Declaração das variáveis de string
-    let candidato1 = "",
-        candidato2 = "",
-        candidato3 = "",
+    let 
         ganhador = "",
         senha = "";
 
@@ -38,43 +31,26 @@ function urnaEletronica() {
     let votoC1 = 0,
         votoC2 = 0,
         votoC3 = 0,
+        votoC4 = 0,
+        votoC5 = 0,
         votoBranco = 0,
         votoGanhador = 0,
         votoNulo = 0;
     
     // Declaração das variáveis booleanas
     let 
-    condicaoCandidato = false;
     votoConfirmacao = true;
 
-    // Prompt para armazenar o nome dos candidatos
-    candidato1 = prompt("Digite o nome do candidato n° 1: ");
-    candidato2 = prompt("Digite o nome do candidato n° 2: ");
-    candidato3 = prompt("Digite o nome do candidato n° 3: ");
+    let candidato = [[13, 19, 24, 25, 30, 5],
+                     ["Silvana", "Arthur", "Godofredo", "João", "Marina", "Branco"]];
 
-    // Loop criado enquanto o confirm armazenado pela variável condicaoCandidato for diferente de false
-    while (!condicaoCandidato) {
-        // Variável responsável por armazenar o valor do método confirm()
-        condicaoCandidato = confirm(`Você confirma o nome dos candidatos abaixo?\n1 - ${candidato1}\n2 - ${candidato2}\n3 - ${candidato3}`);
-        // Se a condição for true
-        if (!condicaoCandidato) {
-            // Variável criada para armazenar qual candidato gostariam de redefinir, utilizando o parseInt para declarar como número inteiro
-            let redefinir = parseInt(prompt(`Qual candidato gostaria de redefinir?\n[1] ${candidato1}\n[2] ${candidato2}\n[3] ${candidato3}`));
-            // Criação das condições para redefinição do nome dos candidatos
-            if (redefinir >= 1 && redefinir <= 3) {
-                if (redefinir === 1) {
-                    candidato1 = prompt("Escreva o nome do candidato n° 1: ");
-                } else if (redefinir === 2) {
-                    candidato2 = prompt("Escreva o nome do candidato n° 2: ");
-                } else if (redefinir === 3) {
-                    candidato3 = prompt("Escreva o nome do candidato n° 3: ");
-                }
-            } else {
-                // Else criado caso a condição seja true
-                alert("Valor inválido, tente novamente!");
-                return;
-            }
-        }
+    let candidatosTag = document.getElementById("candidatos");
+
+    let dataHora;
+    let dataHoraFinal;
+
+    for(i = 0; i <= 4; i++){
+           candidatosTag.innerHTML += `Candidato ${candidato[0][i]} - ${candidato[1][i]}<br>`;
     }
 
     // Variável para armazenar qual a senha criada para encerrar toda a operação e exibir os votos
@@ -88,9 +64,10 @@ function urnaEletronica() {
     // Definir o valor da variável fim para o loop
     let fim = false;
 
-    do {
-        let operacao = prompt(`Digite o número correspondente ao seu voto:\n\n[1] ${candidato1}\n[2] ${candidato2}\n[3] ${candidato3}\n[5] Branco`);
+    dataHora = horaVotacao();
 
+    do {
+        let operacao = prompt("Digite o número correspondente ao seu voto: ");
         switch (operacao) {
             case "5":
                 votoConfirmacao = confirm("Você votou em branco. Deseja confirmar seu voto?");
@@ -107,22 +84,27 @@ function urnaEletronica() {
                 break;
             default:
                 let voto = parseInt(operacao);
-                if (!isNaN(voto) && voto >= 1 && voto <= 3) {
-                    let confirmacaoVoto = confirm(`Você votou em ${eval('candidato' + voto)}. Deseja confirmar seu voto?`);
+                if (!isNaN(voto) && candidato[0].includes(voto)) {
+                    let confirmacaoVoto = confirm(`Você votou em ${candidato[1][candidato[0].indexOf(voto)]}. Deseja confirmar seu voto?`);
                     if (confirmacaoVoto) {
-                        alert(`Voto para ${eval('candidato' + voto)} registrado com sucesso!`);
+                        alert(`Voto para ${candidato[1][candidato[0].indexOf(voto)]} registrado com sucesso!`);
                         switch (voto) {
-                            case 1:
+                            case 13:
                                 votoC1++;
                                 break;
-                            case 2:
+                            case 19:
                                 votoC2++;
                                 break;
-                            case 3:
+                            case 24:
                                 votoC3++;
                                 break;
-                        }
-                    } else {
+                            case 25:
+                                votoC4++;
+                                break;
+                            case 30:
+                                votoC5++;
+                                break;
+                    }} else {
                         // Adicionando opção de corrigir o voto
                         alert("Corrigindo voto.");
                     }
@@ -141,36 +123,44 @@ function urnaEletronica() {
     
 
     // Contagem dos votos e definição do ganhador
-    if (votoC1 > votoC2 && votoC1 > votoC3) {
-        ganhador = candidato1;
+    if (votoC1 > votoC2 && votoC1 > votoC3 && votoC1 > votoC4 && votoC1 > votoC5) {
+        ganhador = candidato[1][0];
         votoGanhador = votoC1 + votoBranco;
-    } else if (votoC2 > votoC1 && votoC2 > votoC3) {
-        ganhador = candidato2;
+    } else if (votoC2 > votoC1 && votoC2 > votoC3 && votoC2 > votoC4 && votoC2 > votoC5) {
+        ganhador = candidato[1][1];
         votoGanhador = votoC2 + votoBranco;
-    } else if (votoC3 > votoC1 && votoC3 > votoC2) {
-        ganhador = candidato3;
+    } else if (votoC3 > votoC1 && votoC3 > votoC2 && votoC3 > votoC4 && votoC3 > votoC5) {
+        ganhador = candidato[1][2];
         votoGanhador = votoC3 + votoBranco;
-    } else {
+    } else if (votoC4 > votoC1 && votoC4 > votoC2 && votoC4 > votoC3 && votoC4 > votoC5) {
+        ganhador = candidato[1][3];
+        votoGanhador = votoC4 + votoBranco;
+    } else if(votoC5 > votoC1 && votoC5 > votoC2 && votoC5 > votoC3 && votoC5 > votoC4){
+        ganhador = candidato[1][4];
+        votoGanhador = votoC5 + votoBranco;
+    }else {
         alert(`Empate! Sem ganhadores.\nA quantidade de votos brancos e nulos foram de: ${(votoBranco / (votoBranco + votoNulo) * 100).toFixed(2)}% e ${votoBranco} votos brancos no total e ${(votoNulo / (votoBranco + votoNulo) * 100).toFixed(2)}% e ${votoNulo} votos nulos no total.`);
     }
 
     // Contas para as porcentagens e o total de votos
-    let totalVotos = votoC1 + votoC2 + votoC3 + votoBranco + votoNulo;
+    let totalVotos = votoC1 + votoC2 + votoC3 + votoC4 + votoC5 + votoBranco + votoNulo;
     let porcentagemC1 = (votoC1 / totalVotos) * 100;
     let porcentagemC2 = (votoC2 / totalVotos) * 100;
     let porcentagemC3 = (votoC3 / totalVotos) * 100;
+    let porcentagemC4 = (votoC4 / totalVotos) * 100;
+    let porcentagemC5 = (votoC5 / totalVotos) * 100;
     let porcentagem = (votoGanhador / totalVotos) * 100;
     let porcentagemBranco = (votoBranco / totalVotos) * 100;
     let porcentagemNulo = (votoNulo / totalVotos) * 100;
 
     // Se o ganhador for diferente de string vazio
     if (ganhador !== "") {
-        alert(`O total de voto de todos os candidatos e seus percentuais foram:\n${candidato1}, ${votoC1} e ${porcentagemC1.toFixed(2)}%\n${candidato2}, ${votoC2} e ${porcentagemC2.toFixed(2)}%\n${candidato3}, ${votoC3} e ${porcentagemC3.toFixed(2)}%`);
-        alert(`A quantidade de votos brancos e nulos foram de:\n${porcentagemBranco.toFixed(2)}% e ${votoBranco} de votos brancos no total\n${porcentagemNulo.toFixed(2)}`);
+        alert(`O total de voto de todos os candidatos e seus percentuais foram:\n${candidato[1][0]}, ${votoC1} e ${porcentagemC1.toFixed(2)}%\n${candidato[1][1]}, ${votoC2} e ${porcentagemC2.toFixed(2)}%\n${candidato[1][2]}, ${votoC3} e ${porcentagemC3.toFixed(2)}%\n${candidato[1][3]}, ${votoC4} e ${porcentagemC4.toFixed(2)}%\n${candidato[1][4]}, ${votoC5} e ${porcentagemC5.toFixed(2)}%`);
+        alert(`A quantidade de votos brancos e nulos foram de:\n${votoBranco} votos brancos no total e ${votoNulo} votos nulos.`);
         alert(`O ganhador foi ${ganhador} com ${porcentagem.toFixed(2)}% dos votos e ${votoGanhador} votos com acréscimo de votos brancos.`);
     }
 
-    horaVotacaoFinal();
+    dataHoraFinal = horaVotacao();
 }
 
 
