@@ -1,25 +1,42 @@
 function validarUrna() {
-    const hashOriginal = "0ee110c20c3538c2382e738c93f4898075159def016b7b2722f2377971466263";
+    // const hashOriginal = "4d08a66077483e20dcc4edd7ca7773738f6ab21d397053d5cb463d6a23a4773f";
 
-    const codigoUrna = urnaEletronica.toString();
+    // const codigoUrna = urnaEletronica.toString();
 
-    const hashObtido = CryptoJS.SHA256(codigoUrna).toString();
+    // const hashObtido = CryptoJS.SHA256(codigoUrna).toString();
 
-    console.log("Hash Original:", hashOriginal);
-    console.log("Hash Obtido:", hashObtido);
+    // console.log("Hash Original:", hashOriginal);
+    // console.log("Hash Obtido:", hashObtido);
 
-    if(hashObtido === hashOriginal){
-        console.log("A urna não foi alterada! Executando o código para a função...");
-    } else {
-        console.log("A urna foi alterada. Não é possível executar a função.");
-    }
+    // if(hashObtido === hashOriginal){
+    //     console.log("A urna não foi alterada! Executando o código para a função...");
+    // } else {
+    //     console.log("A urna foi alterada. Não é possível executar a função.");
+    // }
+
+    fetch('main.js')
+    .then(response => response.text())
+    .then(response => CryptoJS.SHA256(response).toString())
+    .then(hashUrnaAtual => {
+        fetch('hashValido')
+        .then(response => response.text())
+        .then(hashValido => {
+
+            if(hashUrnaAtual === hashValido){
+                console.log('Urna verificada. Código integro.');
+            } else {
+                console.log('[ERRO] URNA ADULTERADA. NÃO CONFEREM!');
+                console.log(`HASH DA URNA: ${hashUrnaAtual}`);
+                console.log(`HASH ESPERADO: ${hashValido}`);
+            }
+        });
+    });
 }
 
 function horaVotacao(){
     horaAtual = new Date();
     alert("Hora atual - " + horaAtual.getHours() + ":" + horaAtual.getMinutes() + ":" + horaAtual.getSeconds() + "\nData atual - " + horaAtual.getDate() + "/" + (horaAtual.getMonth()+1) + "/" + horaAtual.getFullYear());
 }
-
 
 function urnaEletronica() {
     // Declaração das variáveis de string
@@ -49,12 +66,18 @@ function urnaEletronica() {
     let dataHora;
     let dataHoraFinal;
 
+    console.log("Ínicio do programa");
+    console.log("CONFIGURAÇÃO DA URNA");
+
     for(i = 0; i <= 4; i++){
            candidatosTag.innerHTML += `Candidato ${candidato[0][i]} - ${candidato[1][i]}<br>`;
     }
 
     // Variável para armazenar qual a senha criada para encerrar toda a operação e exibir os votos
     senha = prompt("Digite a senha necessária para encerrar a operação: ");
+    if(senha == null){
+        return;
+    }
     // Se a senha estiver vazia, aparecerá um aviso e a operação será quebrada.
     if (senha == ""){
         alert("Digite uma senha.");
@@ -68,6 +91,9 @@ function urnaEletronica() {
 
     do {
         let operacao = prompt("Digite o número correspondente ao seu voto: ");
+        if(operacao == null){
+            return;
+        }
         switch (operacao) {
             case "5":
                 votoConfirmacao = confirm("Você votou em branco. Deseja confirmar seu voto?");
@@ -77,10 +103,14 @@ function urnaEletronica() {
                 } else {
                     // Adicionando opção de corrigir o voto em branco
                     alert("Corrigindo voto em branco.");
+                    continue;
                 }
                 break;
             case senha:
                 fim = confirm("Você tem certeza que deseja encerrar a operação?");
+                if(fim == false){
+                    return;
+                }
                 break;
             default:
                 let voto = parseInt(operacao);
@@ -107,6 +137,7 @@ function urnaEletronica() {
                     }} else {
                         // Adicionando opção de corrigir o voto
                         alert("Corrigindo voto.");
+                        continue;
                     }
                 } else {
                     let confirmacao = confirm("Seu voto será anulado. Gostaria de prosseguir?");
@@ -116,6 +147,7 @@ function urnaEletronica() {
                     } else {
                         // Adicionando opção de corrigir o voto nulo
                         alert("Corrigindo voto nulo.");
+                        continue;
                     }
                 }
         }
@@ -139,7 +171,7 @@ function urnaEletronica() {
         ganhador = candidato[1][4];
         votoGanhador = votoC5 + votoBranco;
     }else {
-        alert(`Empate! Sem ganhadores.\nA quantidade de votos brancos e nulos foram de: ${(votoBranco / (votoBranco + votoNulo) * 100).toFixed(2)}% e ${votoBranco} votos brancos no total e ${(votoNulo / (votoBranco + votoNulo) * 100).toFixed(2)}% e ${votoNulo} votos nulos no total.`);
+        alert(`Empate! Sem ganhadores.\nA quantidade de voto(s) branco(s) e nulo(s) foram de: ${(votoBranco / (votoBranco + votoNulo) * 100).toFixed(2)}% e ${votoBranco} voto(s) branco(s) no total e ${(votoNulo / (votoBranco + votoNulo) * 100).toFixed(2)}% e ${votoNulo} voto(s) nulo(s) no total.`);
     }
 
     // Contas para as porcentagens e o total de votos
@@ -156,12 +188,12 @@ function urnaEletronica() {
     // Se o ganhador for diferente de string vazio
     if (ganhador !== "") {
         alert(`O total de voto de todos os candidatos e seus percentuais foram:\n${candidato[1][0]}, ${votoC1} e ${porcentagemC1.toFixed(2)}%\n${candidato[1][1]}, ${votoC2} e ${porcentagemC2.toFixed(2)}%\n${candidato[1][2]}, ${votoC3} e ${porcentagemC3.toFixed(2)}%\n${candidato[1][3]}, ${votoC4} e ${porcentagemC4.toFixed(2)}%\n${candidato[1][4]}, ${votoC5} e ${porcentagemC5.toFixed(2)}%`);
-        alert(`A quantidade de votos brancos e nulos foram de:\n${votoBranco} votos brancos no total e ${votoNulo} votos nulos.`);
-        alert(`O ganhador foi ${ganhador} com ${porcentagem.toFixed(2)}% dos votos e ${votoGanhador} votos com acréscimo de votos brancos.`);
+        alert(`A quantidade de voto(s) branco(s) e nulo(s) foram de:\n${votoBranco} voto(s) branco(s) no total e ${votoNulo} voto(s) nulo(s).`);
+        alert(`O ganhador foi ${ganhador} com ${porcentagem.toFixed(2)}% dos votos e ${votoGanhador} voto(s) com acréscimo de voto(s) branco(s).`);
     }
 
     dataHoraFinal = horaVotacao();
+    validarUrna();
 }
 
 
-validarUrna();
