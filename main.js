@@ -1,37 +1,26 @@
+// Variáveis globais para armazenar informações
+let hashUrnaAtual = '';
+let hashValido = '';
+let candidatosImpressos = false;
+
+// Função para validar a urna
 async function validarUrna() {
-    // const hashOriginal = "4d08a66077483e20dcc4edd7ca7773738f6ab21d397053d5cb463d6a23a4773f";
+    const responseMain = await fetch('main.js');
+    const responseHash = await responseMain.text();
+    hashUrnaAtual = CryptoJS.SHA256(responseHash).toString();
 
-    // const codigoUrna = urnaEletronica.toString();
+    const responseHashValido = await fetch('hashValido');
+    hashValido = await responseHashValido.text();
 
-    // const hashObtido = CryptoJS.SHA256(codigoUrna).toString();
-
-    // console.log("Hash Original:", hashOriginal);
-    // console.log("Hash Obtido:", hashObtido);
-
-    // if(hashObtido === hashOriginal){
-    //     console.log("A urna não foi alterada! Executando o código para a função...");
-    // } else {
-    //     console.log("A urna foi alterada. Não é possível executar a função.");
-    // }
-
-    fetch('main.js')
-    .then(response => response.text())
-    .then(response => CryptoJS.SHA256(response).toString())
-    .then(hashUrnaAtual => {
-        fetch('hashValido')
-        .then(response => response.text())
-        .then(hashValido => {
-
-            if(hashUrnaAtual === hashValido){
-                console.log('Urna verificada. Código integro.');
-            } else {
-                console.log('[ERRO] URNA ADULTERADA. NÃO CONFEREM!');
-                console.log(`HASH DA URNA: ${hashUrnaAtual}`);
-                console.log(`HASH ESPERADO: ${hashValido}`);
-            }
-        });
-    });
+    if (hashUrnaAtual === hashValido) {
+        console.log('Urna verificada. Código íntegro.');
+    } else {
+        console.log('[ERRO] URNA ADULTERADA. NÃO CONFEREM!');
+        console.log(`HASH DA URNA: ${hashUrnaAtual}`);
+        console.log(`HASH ESPERADO: ${hashValido}`);
+    }
 }
+
 
 function horaVotacao(){
     horaAtual = new Date();
@@ -47,6 +36,9 @@ async function audioVotacao() {
 }
 
 async function urnaEletronica() {
+    if (candidatosImpressos) {
+        return;
+    }
     // Declaração das variáveis de string
     let 
         ganhador = "",
@@ -77,10 +69,9 @@ async function urnaEletronica() {
     console.log("Ínicio do programa");
     console.log("CONFIGURAÇÃO DA URNA");
 
-    for (let i = 0; i <= 4; i++) {
+    for (let i = 0; i <= 5; i++) {
         candidatosTag.innerHTML += `Candidato ${candidato[0][i]} - ${candidato[1][i]}<br>`;
         // Aguarde 10 milissegundos para permitir a atualização do DOM
-        await sleep(10);
     }
 
     // Variável para armazenar qual a senha criada para encerrar toda a operação e exibir os votos
@@ -112,6 +103,7 @@ async function urnaEletronica() {
                 if (votoConfirmacao == true) {
                     alert("Voto em branco registrado com sucesso.");
                     votoBranco++;
+                    await audioVotacao();
                 } else {
                     // Adicionando opção de corrigir o voto em branco
                     alert("Corrigindo voto em branco.");
@@ -157,6 +149,7 @@ async function urnaEletronica() {
                     if (confirmacao) {
                         alert("Voto nulo registrado com sucesso!");
                         votoNulo++;
+                        await audioVotacao();
                     } else {
                         // Adicionando opção de corrigir o voto nulo
                         alert("Corrigindo voto nulo.");
@@ -205,6 +198,7 @@ async function urnaEletronica() {
         alert(`O ganhador foi ${ganhador} com ${porcentagem.toFixed(2)}% dos votos e ${votoGanhador} voto(s) com acréscimo de voto(s) branco(s).`);
     }
 
+    candidatosImpressos = true;
     dataHoraFinal = horaVotacao();
     validarUrna();
 }
@@ -212,4 +206,3 @@ async function urnaEletronica() {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-
