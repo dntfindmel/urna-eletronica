@@ -1,4 +1,4 @@
-function validarUrna() {
+async function validarUrna() {
     // const hashOriginal = "4d08a66077483e20dcc4edd7ca7773738f6ab21d397053d5cb463d6a23a4773f";
 
     // const codigoUrna = urnaEletronica.toString();
@@ -38,7 +38,15 @@ function horaVotacao(){
     alert("Hora atual - " + horaAtual.getHours() + ":" + horaAtual.getMinutes() + ":" + horaAtual.getSeconds() + "\nData atual - " + horaAtual.getDate() + "/" + (horaAtual.getMonth()+1) + "/" + horaAtual.getFullYear());
 }
 
-function urnaEletronica() {
+async function audioVotacao() {
+    return new Promise((resolve) => {
+        const audio = new Audio('./confirmacao.mp3');
+        audio.onended = resolve;
+        audio.play();
+    });
+}
+
+async function urnaEletronica() {
     // Declaração das variáveis de string
     let 
         ganhador = "",
@@ -69,8 +77,10 @@ function urnaEletronica() {
     console.log("Ínicio do programa");
     console.log("CONFIGURAÇÃO DA URNA");
 
-    for(i = 0; i <= 4; i++){
-           candidatosTag.innerHTML += `Candidato ${candidato[0][i]} - ${candidato[1][i]}<br>`;
+    for (let i = 0; i <= 4; i++) {
+        candidatosTag.innerHTML += `Candidato ${candidato[0][i]} - ${candidato[1][i]}<br>`;
+        // Aguarde 10 milissegundos para permitir a atualização do DOM
+        await sleep(10);
     }
 
     // Variável para armazenar qual a senha criada para encerrar toda a operação e exibir os votos
@@ -83,6 +93,8 @@ function urnaEletronica() {
         alert("Digite uma senha.");
         return;
     }
+
+    await validarUrna();
 
     // Definir o valor da variável fim para o loop
     let fim = false;
@@ -118,6 +130,7 @@ function urnaEletronica() {
                     let confirmacaoVoto = confirm(`Você votou em ${candidato[1][candidato[0].indexOf(voto)]}. Deseja confirmar seu voto?`);
                     if (confirmacaoVoto) {
                         alert(`Voto para ${candidato[1][candidato[0].indexOf(voto)]} registrado com sucesso!`);
+                        await audioVotacao();
                         switch (voto) {
                             case 13:
                                 votoC1++;
@@ -196,4 +209,7 @@ function urnaEletronica() {
     validarUrna();
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
