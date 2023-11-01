@@ -1,10 +1,8 @@
-{
-    "candidatos": [
-        {"numero": 13, "nome": "Silvana"},
-        {"numero": 19, "nome": "Arthur"},
-        {"numero": 24, "nome": "Godofredo"},
-        {"numero": 25, "nome": "João"},
-        {"numero": 30, "nome": "Marina"},
-        {"numero": 5, "nome": "Branco"}
-    ]
-}
+[
+  {"numero": 13, "nome": "Silvana"},
+  {"numero": 19, "nome": "Arthur"},
+  {"numero": 24, "nome": "Godofredo"},
+  {"numero": 25, "nome": "João"},
+  {"numero": 30, "nome": "Marina"},
+  {"numero": 5, "nome": "Branco"}
+]
