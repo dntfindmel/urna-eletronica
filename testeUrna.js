@@ -4,7 +4,9 @@ let hashValido = '';
 let candidatosImpressos = false;
 
 // Função para validar a urna
-async function validarUrna() {
+
+// TROQUEI PARA CONST PARA QUE NINGUEM REMOVA A FUNÇÃO DE VALIDAÇÃO :D
+const validarUrna = async () => {
     const responseMain = await fetch('testeUrna.js');
     const responseHash = await responseMain.text();
     hashUrnaAtual = CryptoJS.SHA256(responseHash).toString();
@@ -40,7 +42,11 @@ async function audioVotacao() {
 async function carregarCandidatos(){
     const resolve = await fetch('candidatos.json');
     const data = resolve.json();
-    data.candidatos;
+    
+    // SEGUINDO A MODIFICAÇÃO DO JSON, AGORA NÃO PRECISAR MAIS ACESSAR O .candidatos, AGORA RETORNA A LISTA DIRETAMENTE.
+    // O PROBLEMA DESSA FUNÇÃO TAMBÉM, É QUE FALTA O RETURN DELA, PARA RETORNAR OS VALORES.
+
+    return data;
 }
 
 async function testeUrnaEletronica() {
@@ -49,6 +55,7 @@ async function testeUrnaEletronica() {
     }
 
     let candidatos = await carregarCandidatos();
+    console.log('CANDIDATOS', candidatos)
     // Declaração das variáveis de string
     let 
         ganhador = "",
@@ -77,7 +84,8 @@ async function testeUrnaEletronica() {
     console.log("CONFIGURAÇÃO DA URNA");
 
     for (let i = 0; i < candidatos.length ; i++) {
-        candidatosTag.innerHTML += `Candidato ${candidatos[i].numero} - ${candidatos[i].nome}<br>`}
+        candidatosTag.innerHTML += `Candidato ${candidatos[i].numero} - ${candidatos[i].nome}<br>`
+    }
 
     await validarUrna();
 
