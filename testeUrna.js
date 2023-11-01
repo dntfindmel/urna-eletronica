@@ -5,12 +5,14 @@ let candidatosImpressos = false;
 
 // Função para validar a urna
 async function validarUrna() {
-    const responseMain = await fetch('main.js');
+    const responseMain = await fetch('testeUrna.js');
     const responseHash = await responseMain.text();
     hashUrnaAtual = CryptoJS.SHA256(responseHash).toString();
 
-    const responseHashValido = await fetch('hashValido');
-    hashValido = await responseHashValido.text();
+    const responseConfig = await fetch('config.json');
+    const configData = await responseConfig.json();
+    hashValido = configData.hashValido;
+    senhaMesario = configData.senhaMesario;
 
     if (hashUrnaAtual === hashValido) {
         console.log('Urna verificada. Código íntegro.');
@@ -35,10 +37,18 @@ async function audioVotacao() {
     });
 }
 
-async function urnaEletronica() {
+async function carregarCandidatos(){
+    const resolve = await fetch('candidatos.json');
+    const data = resolve.json();
+    data.candidatos;
+}
+
+async function testeUrnaEletronica() {
     if (candidatosImpressos) {
         return;
     }
+
+    let candidatos = await carregarCandidatos();
     // Declaração das variáveis de string
     let 
         ganhador = "",
@@ -58,9 +68,6 @@ async function urnaEletronica() {
     let 
     votoConfirmacao = true;
 
-    let candidato = [[13, 19, 24, 25, 30, 5],
-                     ["Silvana", "Arthur", "Godofredo", "João", "Marina", "Branco"]];
-
     let candidatosTag = document.getElementById("candidatos");
 
     let dataHora;
@@ -69,20 +76,8 @@ async function urnaEletronica() {
     console.log("Ínicio do programa");
     console.log("CONFIGURAÇÃO DA URNA");
 
-    for (let i = 0; i <= 5; i++) {
-        candidatosTag.innerHTML += `Candidato ${candidato[0][i]} - ${candidato[1][i]}<br>`;
-    }
-
-    // Variável para armazenar qual a senha criada para encerrar toda a operação e exibir os votos
-    senha = prompt("Digite a senha necessária para encerrar a operação: ");
-    if(senha == null){
-        return;
-    }
-    // Se a senha estiver vazia, aparecerá um aviso e a operação será quebrada.
-    if (senha == ""){
-        alert("Digite uma senha.");
-        return;
-    }
+    for (let i = 0; i < candidatos.length ; i++) {
+        candidatosTag.innerHTML += `Candidato ${candidatos[i].numero} - ${candidatos[i].nome}<br>`}
 
     await validarUrna();
 
@@ -109,16 +104,16 @@ async function urnaEletronica() {
                     continue;
                 }
                 break;
-            case senha:
+            case senhaMesario:
                 fim = confirm("Você tem certeza que deseja encerrar a operação?");
-                if(fim == false){
+                if(!fim){
                     return;
                 }
                 break;
             default:
                 let voto = parseInt(operacao);
-                if (!isNaN(voto) && candidato[0].includes(voto)) {
-                    let confirmacaoVoto = confirm(`Você votou em ${candidato[1][candidato[0].indexOf(voto)]}. Deseja confirmar seu voto?`);
+                if (!isNaN(voto) && candidatos[0].includes(voto)) {
+                    let confirmacaoVoto = confirm(`Você votou em ${candidatos[1][candidato[0].indexOf(voto)]}. Deseja confirmar seu voto?`);
                     if (confirmacaoVoto) {
                         alert(`Voto para ${candidato[1][candidato[0].indexOf(voto)]} registrado com sucesso!`);
                         await audioVotacao();
