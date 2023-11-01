@@ -1,23 +1,24 @@
 // Variáveis globais para armazenar informações
-let hashUrnaAtual = '';
-let hashValido = '';
 let candidatosImpressos = false;
 
 // Função para validar a urna
 async function validarUrna() {
-    const responseMain = await fetch('main.js');
-    const responseHash = await responseMain.text();
-    hashUrnaAtual = CryptoJS.SHA256(responseHash).toString();
+    let hashUrnaAtual;
+    let hashValido;
 
-    const responseHashValido = await fetch('hashValido');
-    hashValido = await responseHashValido.text();
+    await fetch('main.js')
+    .then(response => response.text())
+    .then(response => CryptoJS.SHA256(response).toString())
+    .then(response => hashUrnaAtual = response);
 
-    if (hashUrnaAtual === hashValido) {
-        console.log('Urna verificada. Código íntegro.');
-    } else {
-        console.log('[ERRO] URNA ADULTERADA. NÃO CONFEREM!');
-        console.log(`HASH DA URNA: ${hashUrnaAtual}`);
-        console.log(`HASH ESPERADO: ${hashValido}`);
+    await fetch ('hashValido')
+    .then(response => response.text())
+    .then(response => hashValido = response);
+
+    return{
+        hashUrnaAtual: hashUrnaAtual,
+        hashValido: hashValido,
+        status: hashUrnaAtual === hashValido
     }
 }
 
@@ -200,7 +201,16 @@ async function urnaEletronica() {
 
     candidatosImpressos = true;
     dataHoraFinal = horaVotacao();
-    validarUrna();
+    validarUrna().then(verificacao => {
+       if(verificacao.status){
+            console.log("Hashes verificados, urna íntegra.");
+       } else {
+            console.log("URNA ADULTERADA! DEVE SER DESCARTADA.");
+            console.log(`Hash urna atual: ${verificacao.hashUrnaAtual}`);
+            console.log(`Hash válido: ${verificacao.hashValido}`);
+       }
+       console.log("Fim do programa.")
+    });
 }
 
 function sleep(ms) {
